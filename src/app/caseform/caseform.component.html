@@ -1,0 +1,1790 @@
+<!-- version 0.1 -->
+
+<img style="padding:40px;" src="https://vrassist.co.uk/caseform/img/westminster1.png" height="20%" width="20%" />
+<img style="padding:45px;" src="https://vrassist.co.uk/caseform/img/vs1.png" />
+<br /><br />
+<!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<button mat-raised-button class="mat-primary" (click)="fillUsingSavedData()">Load previously saved data</button>
+<br><br>-->
+
+<mat-horizontal-stepper [linear]="isLinear" #stepper class="page-padding">
+  <br /><br />
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel class="not-on-mobile">Required Info</ng-template>
+
+      <h1>Required Info</h1>
+
+      <mat-accordion class="example-headers-align">
+        <br />
+
+        <mat-expansion-panel formGroupName="case" [expanded]="step.one === 0" (opened)="setStep('one', 0)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <h2>Your case</h2>
+            </mat-panel-title>
+            <mat-panel-description>
+              <h3>Please fill in all the fields</h3>
+              <mat-icon>list_alt</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <a id="problem"></a><br /><br />
+          <app-chips-autocomplete></app-chips-autocomplete>
+          <div class="must-field">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Detailed description of your case</mat-label>
+              <mat-icon matSuffix>error</mat-icon>
+              <textarea (keyup)="save('temp')" matInput rows="5" minlength="4" #yourProblem maxlength="4000"
+                placeholder="Describe your problem" formControlName="problem" [errorStateMatcher]="matcher"></textarea>
+              <mat-hint align="start"><strong>Please try to be as thorough as possible.</strong>
+              </mat-hint>
+              <mat-hint align="end">{{ yourProblem.value.length }} / 4000</mat-hint>
+              <mat-error *ngIf="
+                  firstFormGroup.controls.case.controls.problem.errors?.required
+                ">
+                This field is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="problemDescriptionIsTooShort">
+                Please try do add <strong>more details</strong> to the
+                description
+              </mat-error>
+              <!-- https://stackblitz.com/angular/qdxrokeqakb?file=app%2Fchips-autocomplete-example.ts -->
+            </mat-form-field>
+            <BR /><BR />
+            A detailed description of your case is very important for us.
+          </div>
+
+          <br />
+          <br />
+          <br />
+          <a id="solution"></a>
+
+          <div class="must-field">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>A solution could be...</mat-label>
+              <textarea (keyup)="save('temp')" matInput rows="5" #yourSolution maxlength="600" minlength="4"
+                placeholder="Suggest a possible solution" formControlName="solution"
+                [errorStateMatcher]="matcher"></textarea>
+              <mat-hint align="start"><strong>Please try to propose a solution.</strong>
+              </mat-hint>
+              <mat-hint align="end">{{ yourSolution.value.length }} / 600</mat-hint>
+              <mat-error *ngIf="
+                  firstFormGroup.controls.case.controls.solution.errors
+                    ?.required
+                ">
+                This field is <strong>required</strong>
+              </mat-error>
+              <mat-icon matSuffix>comment</mat-icon>
+            </mat-form-field>
+            <BR /><BR />
+
+            Please enter a possible solution in order to be able to submit the
+            caseform.
+          </div>
+
+          <BR /><BR />
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of incident</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="date_incident"
+              placeholder="Date of incident" [matDatepicker]="picker4" (focus)="picker4.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+            <mat-hint>(or most recent incident)</mat-hint>
+            <!--  <mat-error *ngIf="firstFormGroup.controls.case.controls.date_incident.hasError('required')">
+              This field is <strong>required</strong>
+            </mat-error> -->
+          </mat-form-field>
+          <mat-datepicker #picker4></mat-datepicker>
+
+          <br /><br />
+          <p>Please let us know the date of forthcoming hearing</p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of forthcoming hearing 1</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="date_hearing1"
+              placeholder="Date of hearing 1" [matDatepicker]="picker5" (focus)="picker5.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+            <!-- <mat-error *ngIf="firstFormGroup.controls.case.controls.date_hearing1.hasError('required')">
+              This field is <strong>required</strong>
+            </mat-error> -->
+          </mat-form-field>
+          <mat-datepicker #picker5></mat-datepicker>
+
+          <br /><br />
+          <button mat-raised-button class="mat-primary align-left" (click)="move(3)">
+            JUMP TO LAST STEP
+          </button>
+
+          <mat-action-row layout-align="start left">
+            <a mat-button color="primary" (click)="nextStep('one')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel formGroupName="job" [expanded]="step.one === 1" (opened)="setStep('one', 1)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Employment Details
+            </mat-panel-title>
+            <mat-panel-description>
+              Details about your job
+              <mat-icon>work</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Job title/occupation</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your job title"
+              formControlName="job_title" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.job.controls.job_title.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>work</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date you entered office</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="commenced"
+              placeholder="Employment commenced" [matDatepicker]="picker2" (focus)="picker2.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+            <mat-error *ngIf="
+                firstFormGroup.controls.job.controls.commenced.hasError(
+                  'required'
+                )
+              ">
+              This date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-datepicker #picker2></mat-datepicker>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('one')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('one')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel formGroupName="employer" [expanded]="step.one === 2" (opened)="setStep('one', 2)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Employer
+            </mat-panel-title>
+            <mat-panel-description>
+              Details about your employer
+              <mat-icon>supervisor_account</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Employer Head Office Name</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write office name here"
+              formControlName="office_name" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.office_name.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>domain</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Street and number"
+              formControlName="address1" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.address1.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>City/Town</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write City/Town here"
+              formControlName="address2" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write county here"
+              formControlName="address3" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write postcode here"
+              formControlName="postcode" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Telephone number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write telephone number here"
+              formControlName="phone_number" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.employer.controls.phone_number.hasError(
+                  'required'
+                )
+              ">
+              A number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('one')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('one')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel formGroupName="workplace" [expanded]="step.one === 3" (opened)="setStep('one', 3)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Workplace
+            </mat-panel-title>
+            <mat-panel-description>
+              About workplace address
+              <mat-icon>business</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Workplace Name</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write workplace name here"
+              formControlName="workplace_name" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.workplace.controls.workplace_name.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>domain</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address </mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Street and number"
+              formControlName="address1" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.workplace.controls.address1.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>City/Town</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write city/town here"
+              formControlName="address2" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.workplace.controls.address2.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write county here"
+              formControlName="address3" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.workplace.controls.address3.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write postcode here"
+              formControlName="postcode" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                firstFormGroup.controls.workplace.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('one')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('one')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="step.one === 4" (opened)="setStep('one', 4)" hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Personal data
+            </mat-panel-title>
+            <mat-panel-description>
+              Name & Email
+              <mat-icon>account_circle</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Forename</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="forename" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="firstFormGroup.controls.forename.hasError('required')">
+              Forename is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Surname</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="surname" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="firstFormGroup.controls.surname.hasError('required')">
+              Surname is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="email" [errorStateMatcher]="matcher" />
+            <mat-hint>We'll send you here copy of documents</mat-hint>
+            <mat-error *ngIf="
+                firstFormGroup.controls.email.errors?.pattern &&
+                !firstFormGroup.controls.email.errors?.required
+              ">
+              Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="firstFormGroup.controls.email.errors?.required">
+              Email is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>mail_outline</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Unison Membership Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="memid" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="firstFormGroup.controls.memid.hasError('required')">
+              Membership number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>fingerprint</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('one')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('one')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div>
+        <br /><br />
+        <button mat-button matStepperNext (click)="save('anotherStep')">
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel class="not-on-mobile">Member Details</ng-template>
+
+      <h1>Member Details</h1>
+
+      <mat-accordion class="example-headers-align">
+        <br />
+        <mat-expansion-panel formGroupName="correspondance" [expanded]="step.two === 0" (opened)="setStep('two', 0)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Correspondace
+            </mat-panel-title>
+            <mat-panel-description>
+              Your Address
+              <mat-icon>home</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Title</mat-label>
+            <mat-select matInput formControlName="title" placeholder="Title">
+              <mat-option (click)="save('temp')" *ngFor="let title of titles" [value]="title.value">
+                {{ title.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.title.hasError(
+                  'required'
+                )
+              ">
+              A selection is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Forename</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="forename" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.forename.hasError(
+                  'required'
+                )
+              ">
+              Forename is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Initial(s)</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your initials"
+              formControlName="initial" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Surname</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="surname" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.surname.hasError(
+                  'required'
+                )
+              ">
+              Surname is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address line 1</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your street and number"
+              formControlName="address1" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.address1.hasError(
+                  'required'
+                )
+              ">
+              Address line 1 is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address line 2</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Use this line if needed"
+              formControlName="address2" />
+
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Town/City</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your town or city"
+              formControlName="city" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.city.hasError(
+                  'required'
+                )
+              ">
+              Town/City is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>location_city</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write your county"
+              formControlName="county" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.county.hasError(
+                  'required'
+                )
+              ">
+              County is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>map</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write your postcode"
+              formControlName="postcode" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.correspondance.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              Postcode is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="contact" [expanded]="step.two === 1" (opened)="setStep('two', 1)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Contact Information
+            </mat-panel-title>
+            <mat-panel-description>
+              Phone & Email
+              <mat-icon>phone_iphone</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Home Telephone Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="home_phone" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.home_phone.hasError(
+                  'required'
+                )
+              ">
+              A number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Work Telephone Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="work_phone" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.work_phone.hasError(
+                  'required'
+                )
+              ">
+              A number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Mobile Telephone Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="mobile_phone" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.mobile_phone.hasError(
+                  'required'
+                )
+              ">
+              A number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>phone_iphone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Work Telephone Extension</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="work_extension" />
+            <!-- <mat-error *ngIf="secondFormGroup.controls.correspondance.controls.postcode.hasError('required')">
+                Postcode is <strong>required</strong>
+              </mat-error> -->
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Home Email Address</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="home_email" [errorStateMatcher]="matcher" />
+            <mat-hint> </mat-hint>
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.home_email.errors
+                  ?.pattern &&
+                !secondFormGroup.controls.contact.controls.home_email.errors
+                  ?.required
+              ">
+              Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.home_email.errors
+                  ?.required
+              ">
+              Email is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Work Email Address</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="work_email" [errorStateMatcher]="matcher" />
+            <mat-hint> </mat-hint>
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.work_email.errors
+                  ?.pattern &&
+                !secondFormGroup.controls.contact.controls.work_email.errors
+                  ?.required
+              ">
+              Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="
+                secondFormGroup.controls.contact.controls.work_email.errors
+                  ?.required
+              ">
+              Email is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Voice/Text Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="voice_text_number" />
+            <!-- <mat-error *ngIf="secondFormGroup.controls.correspondance.controls.postcode.hasError('required')">
+                Postcode is <strong>required</strong>
+              </mat-error> -->
+            <mat-icon matSuffix>phone_iphone</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('two')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="personal" [expanded]="step.two === 2" (opened)="setStep('two', 2)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Personal Information
+            </mat-panel-title>
+            <mat-panel-description>
+              Details about you
+              <mat-icon>person</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of Birth</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="dob"
+              placeholder="Date Of Birth" [matDatepicker]="picker" (focus)="picker.open()" readonly />
+            <mat-icon matSuffix>calendar_today</mat-icon>
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.dob.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> your DOB
+            </mat-error>
+          </mat-form-field>
+
+          <mat-datepicker #picker></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date you joined Unison</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="joined"
+              placeholder="Date you joined Unison" [matDatepicker]="picker1" (focus)="picker1.open()" readonly />
+            <mat-icon matSuffix>calendar_today</mat-icon>
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.joined.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> when you joined us
+            </mat-error>
+          </mat-form-field>
+          <mat-datepicker #picker1></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>National Insurance Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="nino" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.ethnic_origin.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> your NINo
+            </mat-error>
+            <mat-icon matSuffix>fingerprint</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Your gender</mat-label>
+            <mat-select matInput formControlName="gender" placeholder="Gender">
+              <mat-option (click)="save('temp')" *ngFor="let gender of genders" [value]="gender.value">
+                {{ gender.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.gender.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> your gender
+            </mat-error>
+            <mat-icon matSuffix>wc</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Do you have any disability?</mat-label>
+            <mat-select matInput formControlName="have_disability" placeholder="Do you have a disability?"
+              [errorStateMatcher]="matcher">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.have_disability.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> if you have any disability
+            </mat-error>
+            <mat-icon matSuffix>accessible</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Please state any needs</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="any_needs" />
+            <!-- <mat-error *ngIf="secondFormGroup.controls.correspondance.controls.postcode.hasError('required')">
+                Postcode is <strong>required</strong>
+              </mat-error> -->
+            <mat-icon matSuffix>comment</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Ethnic Origin</mat-label>
+            <mat-select matInput formControlName="ethnic_origin" placeholder="Ethnic Origin"
+              [errorStateMatcher]="matcher">
+              <mat-option (click)="save('temp')" *ngFor="let choice of ethnic_origins" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                secondFormGroup.controls.personal.controls.ethnic_origin.hasError(
+                  'required'
+                )
+              ">
+              <strong>We need to know</strong> your ethnic origin
+            </mat-error>
+            <mat-icon matSuffix>portrait</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('two')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel formGroupName="self_organized_groups" [expanded]="step.two === 3"
+          (opened)="setStep('two', 3)" hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Self-organized groups
+            </mat-panel-title>
+            <mat-panel-description>
+              About SOG officers
+              <mat-icon>group</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Title</mat-label>
+            <mat-select matInput formControlName="title" placeholder="Title">
+              <mat-option (click)="save('temp')" *ngFor="let title of titles" [value]="title.value">
+                {{ title.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Forename</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="forename" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.forename.hasError(
+                  'required'
+                )
+              ">
+              Forename is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Initial(s)</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your initials"
+              formControlName="initial" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Surname</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write here"
+              formControlName="surname" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.surname.hasError(
+                  'required'
+                )
+              ">
+              Surname is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address line 1</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your street and number"
+              formControlName="address1" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.address1.hasError(
+                  'required'
+                )
+              ">
+              Address line 1 is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address line 2</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Use this line if needed"
+              formControlName="address2" />
+
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address line 3</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Use this line if needed"
+              formControlName="address3" />
+
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Town/City</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your town or city"
+              formControlName="city" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.city.hasError(
+                  'required'
+                )
+              ">
+              Town/City is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>location_city</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your county here"
+              formControlName="county" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.county.hasError(
+                  'required'
+                )
+              ">
+              County is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>map</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Your postcode here"
+              formControlName="postcode" [errorStateMatcher]="matcher" />
+
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              Postcode is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Contact Telephone</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="contact_phone" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.self_organized_groups.controls.postcode.hasError(
+                  'required'
+                )
+              ">
+              Contact Phone is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('two')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="fitness_to_practice" [expanded]="step.two === 4"
+          (opened)="setStep('two', 4)" hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Fitness to practice
+            </mat-panel-title>
+            <mat-panel-description>
+              Been reported to professional body?
+              <mat-icon>record_voice_over</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Name of Registration Body</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write the name here"
+              formControlName="registration_body" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.fitness_to_practice.controls.registration_body.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>domain</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Professional registration PIN number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="PIN number here"
+              formControlName="pin_number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                secondFormGroup.controls.fitness_to_practice.controls.pin_number.hasError(
+                  'required'
+                )
+              ">
+              PIN number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>fingerprint</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('two')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="disclosure_barring" [expanded]="step.two === 5" (opened)="setStep('two', 5)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Disclosure & Barring scheme
+            </mat-panel-title>
+            <mat-panel-description>
+              Are you barred from working for...?
+              <mat-icon>highlight_off</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            Are you barred from working for either the Disclosure and Barring
+            schemeof Disclosure Scotland?
+          </p>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-select matInput formControlName="adults_list" placeholder="Barred Adult List">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_iam" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>people_outline</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-select matInput formControlName="children_list" placeholder="Barred Children List">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_iam" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>child_care</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('two')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('two')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div>
+        <br /><br />
+        <button mat-button matStepperPrevious (click)="save('anotherStep')">
+          Back
+        </button>
+        <button mat-button matStepperNext (click)="save('anotherStep')">
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="thirdFormGroup">
+    <form [formGroup]="thirdFormGroup">
+      <ng-template matStepLabel class="not-on-mobile">Employment Details</ng-template>
+
+      <h1>Employment Details</h1>
+
+      <mat-accordion class="example-headers-align">
+        <br />
+        <mat-expansion-panel formGroupName="general" [expanded]="step.three === 0" (opened)="setStep('three', 0)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              General Info
+            </mat-panel-title>
+            <mat-panel-description>
+              Details about your job
+              <mat-icon>work</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Payroll Number</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write your number here"
+              formControlName="payrollno" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.general.controls.payrollno.hasError(
+                  'required'
+                )
+              ">
+              Payroll Number is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>money</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Employment ended</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="ended"
+              placeholder="Employment ended" [matDatepicker]="picker3" (focus)="picker3.open()" readonly />
+            <mat-icon matSuffix>work_off</mat-icon>
+          </mat-form-field>
+          <mat-datepicker #picker3></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Employment type</mat-label>
+            <mat-select matInput formControlName="type" placeholder="Employment Type">
+              <mat-option (click)="save('temp')" *ngFor="let choice of employment_types" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>insert_drive_file</mat-icon>
+            <mat-error *ngIf="
+                thirdFormGroup.controls.general.controls.type.hasError(
+                  'required'
+                )
+              ">
+              Employment Type is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="primary" (click)="nextStep('three')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="monetary" [expanded]="step.three === 1" (opened)="setStep('three', 1)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Monetary Info
+            </mat-panel-title>
+            <mat-panel-description>
+              About your salary
+              <mat-icon>payment</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Basic hours per Week</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Hours of work"
+              formControlName="h_week" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.h_week.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>hourglass_empty</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Basic wage per Week</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="wage_week" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.wage_week.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>payment</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Basic salary per month</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="salary_month" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.salary_month.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>payment</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Average take home per week</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="pay_week" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.pay_week.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>money</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Average take home per month</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="pay_month" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.pay_month.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>money</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Other bonuses and benefits per week</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="bonuses_week" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.bonuses_week.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>money</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Other bonuses and benefits per month</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Amount in pounds"
+              formControlName="bonuses_month" type="number" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                thirdFormGroup.controls.monetary.controls.bonuses_month.hasError(
+                  'required'
+                )
+              ">
+              An amount is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>money</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('three')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('three')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div>
+        <br /><br />
+        <button mat-button matStepperPrevious (click)="save('anotherStep')">
+          Back
+        </button>
+        <button mat-button matStepperNext (click)="save('anotherStep')">
+          Next
+        </button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="fourthFormGroup">
+    <form [formGroup]="fourthFormGroup">
+      <ng-template matStepLabel class="not-on-mobile">Case Details</ng-template>
+
+      <h1>Case Details</h1>
+
+      <mat-accordion class="example-headers-align">
+        <br />
+        <mat-expansion-panel formGroupName="general" [expanded]="step.four === 0" (opened)="setStep('four', 0)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              General Info
+            </mat-panel-title>
+            <mat-panel-description>
+              Details about your case
+              <mat-icon>error</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <p>About the first forthcoming hearing</p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Type of hearing 1</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write type of hearing 1"
+              formControlName="type_hearing1" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                fourthFormGroup.controls.general.controls.type_hearing1.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>record_voice_over</mat-icon>
+          </mat-form-field>
+          <br />
+          <p>About the second forthcoming hearing</p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of forthcoming hearing 2</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="date_hearing2"
+              placeholder="Date of hearing 2" [matDatepicker]="picker6" (focus)="picker6.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+          </mat-form-field>
+          <mat-datepicker #picker6></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Type of hearing 2</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write type of hearing 2"
+              formControlName="type_hearing2" type="text" />
+
+            <mat-icon matSuffix>record_voice_over</mat-icon>
+          </mat-form-field>
+
+          <br />
+          <p>About the first forthcoming meeting</p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of forthcoming meeting 1</mat-label>
+            <input (keydown.enter)="(false)" matInput formControlName="date_meeting1" placeholder="Date of meeting 1"
+              [matDatepicker]="picker7" (focus)="picker7.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+            <mat-error *ngIf="
+                fourthFormGroup.controls.general.controls.date_meeting1.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <mat-datepicker (selectedChanged)="save('temp')" #picker7></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Type of meeting 1</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write type of meeting 1"
+              formControlName="type_meeting1" type="text" [errorStateMatcher]="matcher" />
+            <mat-error *ngIf="
+                fourthFormGroup.controls.general.controls.type_meeting1.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>group</mat-icon>
+          </mat-form-field>
+
+          <br />
+          <p>About the second forthcoming meeting</p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date of forthcoming meeting 2</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="date_meeting2"
+              placeholder="Date of meeting 2" [matDatepicker]="picker8" (focus)="picker8.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+          </mat-form-field>
+          <mat-datepicker #picker8></mat-datepicker>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Type of meeting 2</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write type of meeting 2"
+              formControlName="type_meeting2" type="text" />
+            <mat-icon matSuffix>group</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="primary" (click)="nextStep('four')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+        <mat-expansion-panel formGroupName="similar_claim" [expanded]="step.four === 1" (opened)="setStep('four', 1)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Similar Claim
+            </mat-panel-title>
+            <mat-panel-description>
+              Is there anyone with a similar claim?
+              <mat-icon>camera_front</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <p>
+            Please check with other colleagues in the department or your
+            workplace representative to see if anyone else has a similar claim.
+          </p>
+          <p>
+            If there is, please state the name of the other person or persons
+            and their workplace address.
+          </p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Anyone with similar claim?</mat-label>
+            <mat-select matInput formControlName="is_present" placeholder="Anyone with similar claim?">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_thereis" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                fourthFormGroup.controls.similar_claim.controls.is_present.hasError(
+                  'required'
+                )
+              ">
+              This field is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>person_add</mat-icon>
+          </mat-form-field>
+
+          <br /><br />
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Title</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write title here"
+              formControlName="title1" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Forename</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write forename here"
+              formControlName="forename1" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Initials</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write initials here"
+              formControlName="initial1" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Surname</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write surname here"
+              formControlName="surname1" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Street and number"
+              formControlName="address1" />
+
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Town/City</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Town or city"
+              formControlName="city1" />
+            <mat-icon matSuffix>location_city</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write county here"
+              formControlName="county1" />
+            <mat-icon matSuffix>map</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write postcode here"
+              formControlName="postcode1" />
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+          <!-- mrc4 -->
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Contact Telephone </mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write the phone number here"
+              formControlName="contact_phone1" />
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <br /><br /><br />
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Title</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write title here"
+              formControlName="title2" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Forename</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write forename here"
+              formControlName="forename2" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Initials</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write initials here"
+              formControlName="initial2" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Surname</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Write forename here"
+              formControlName="surname2" type="text" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Address</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Street and number"
+              formControlName="address2" />
+            <mat-icon matSuffix>home</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Town/City</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Town or city"
+              formControlName="city2" />
+            <mat-icon matSuffix>location_city</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>County</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write county here"
+              formControlName="county2" />
+            <mat-icon matSuffix>map</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Postcode</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write postcode here"
+              formControlName="postcode2" />
+            <mat-icon matSuffix>pin_drop</mat-icon>
+          </mat-form-field>
+
+          <!-- mrc4 -->
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Contact Telephone </mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="write the phone number here"
+              formControlName="contact_phone2" />
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('four')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('four')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel formGroupName="other_actions" [expanded]="step.four === 2" (opened)="setStep('four', 2)"
+          hideToggle="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Other Actions
+            </mat-panel-title>
+            <mat-panel-description>
+              Allow our action without conflict
+              <mat-icon>warning</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <a id="other_actions"></a>
+          <br /><br />
+          <div class="must-field">
+            <p>Has anyone other than UNISON advised or acted on your behalf?</p>
+            <mat-form-field class="spaceright" appearance="outline">
+              <mat-label>Anyone acted in your behalf?</mat-label>
+              <mat-select matInput formControlName="anyone_else" placeholder="Other advise or action?">
+                <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_straight" [value]="choice.value">
+                  {{ choice.viewValue }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="
+                  fourthFormGroup.controls.other_actions.controls.anyone_else.hasError(
+                    'required'
+                  )
+                ">
+                A selection is <strong>required</strong>
+              </mat-error>
+              <mat-icon matSuffix>person_add</mat-icon>
+            </mat-form-field>
+            <br /><br />
+            For us is very important to know if someone has already acted in
+            your behalf or not.
+          </div>
+          <br />
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Name</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Please write his/her name"
+              formControlName="name" />
+            <mat-icon matSuffix>person</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Action taken</mat-label>
+            <input (keydown.enter)="(false)" (keyup)="save('temp')" matInput placeholder="Describe action taken"
+              formControlName="action" />
+            <mat-icon matSuffix>assignment</mat-icon>
+          </mat-form-field>
+
+          <p>
+            Have you or anyone other than UNISON triggered the ACAS Early
+            Conciliation procedure?
+          </p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Triggered the ACAS?</mat-label>
+            <mat-select matInput formControlName="acas" placeholder="ACAS Early Conciliation?">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_straight" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                fourthFormGroup.controls.other_actions.controls.acas.hasError(
+                  'required'
+                )
+              ">
+              A selection is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>assignment</mat-icon>
+          </mat-form-field>
+
+          <p>If yes, when did you trigger ACAS Early Conciliation?</p>
+
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date trigger ACAS</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="acas_date"
+              placeholder="Date triggered ACAS Early Conciliation" [matDatepicker]="picker9" (focus)="picker9.open()"
+              readonly />
+            <mat-icon matSuffix>today</mat-icon>
+          </mat-form-field>
+          <mat-datepicker #picker9></mat-datepicker>
+
+          <p>
+            If you did trigger an ACAS Early Conciliation procedure, have you
+            received an ACAS Early Conciliation Certificate?
+          </p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Received Certificate?</mat-label>
+            <mat-select matInput formControlName="certificate" placeholder="Received a certificate?">
+              <mat-option (click)="save('temp')" *ngFor="let choice of yesnoanswer_straight" [value]="choice.value">
+                {{ choice.viewValue }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="
+                fourthFormGroup.controls.other_actions.controls.acas.hasError(
+                  'required'
+                )
+              ">
+              A selection is <strong>required</strong>
+            </mat-error>
+            <mat-icon matSuffix>assignment</mat-icon>
+          </mat-form-field>
+          <p>
+            If yes, when did you receive ACAS Early Conciliation Certificate?
+          </p>
+          <mat-form-field class="spaceright" appearance="outline">
+            <mat-label>Date received certificate</mat-label>
+            <input (keydown.enter)="(false)" (click)="save('temp')" matInput formControlName="certificate_date"
+              placeholder="Date received a certificate" [matDatepicker]="picker10" (focus)="picker10.open()" readonly />
+            <mat-icon matSuffix>today</mat-icon>
+          </mat-form-field>
+          <mat-datepicker #picker10></mat-datepicker>
+
+          <mat-action-row>
+            <a mat-button color="warn" (click)="prevStep('four')">Previous</a>
+            <a mat-button color="primary" (click)="nextStep('four')">Next</a>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <div>
+        <br />
+
+        <mat-error *ngIf="
+            !firstFormGroup.controls.case.controls.solution.valid ||
+            !fourthFormGroup.controls.other_actions.controls.anyone_else
+              .valid ||
+            !firstFormGroup.controls.case.controls.problem.valid ||
+            !firstFormGroup.controls.forename.valid
+          ">
+          <br /><br />
+          You are not allowed to the signature page before you fix these
+          problems:
+          <br /><br />
+        </mat-error>
+        <br />
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.case.controls.problem.valid">
+          <!--<mat-error class="must-field" *ngIf="problemDescriptionIsTooShort">-->
+          <ul>
+            <li>
+              The description of your problem needs to be more detailed.
+              <button mat-raised-button mat-button (click)="fixit('problem')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+        <br />
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.case.controls.solution.valid">
+          <ul>
+            <li>
+              You must give us a clue of a possible solution for your problem.
+              <button mat-raised-button mat-button (click)="fixit('solution')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+
+        <br />
+        <!-- Persoanl Data first column -->
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.forename.valid">
+          <ul>
+            <li>
+              Please enter your forename.
+              <button mat-raised-button mat-button (click)="fixit('forename')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+        <br />
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.surname.valid">
+          <ul>
+            <li>
+              Please enter your surname.
+              <button mat-raised-button mat-button (click)="fixit('surname')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+
+        <br />
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.email.valid">
+          <ul>
+            <li>
+              Please enter your Email Address .
+              <button mat-raised-button mat-button (click)="fixit('email')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+
+        <br />
+        <mat-error class="must-field" *ngIf="!firstFormGroup.controls.memid.valid">
+          <ul>
+            <li>
+              Please enter the Unison Membership Number.
+              <button mat-raised-button mat-button (click)="fixit('memid')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+
+        <!-- end of persoanl data -->
+        <br />
+        <mat-error class="must-field" *ngIf="
+            !fourthFormGroup.controls.other_actions.controls.anyone_else.valid
+          ">
+          <ul>
+            <li>
+              You must let us know wether someone else other than Unison already
+              acted in your behalf.
+              <button mat-raised-button mat-button (click)="fixit('other_actions')">
+                Fix it
+              </button>
+            </li>
+          </ul>
+        </mat-error>
+        <br /><br />
+        <button mat-button matStepperPrevious (click)="save('anotherStep')">
+          Back
+        </button>
+        <button mat-button matStepperNext mat-raised-button class="mat-primary" (click)="save('final')"
+          routerLink="/sig-pad" [disabled]="
+            !firstFormGroup.controls.case.controls.solution.valid ||
+            !fourthFormGroup.controls.other_actions.controls.anyone_else
+              .valid ||
+            !firstFormGroup.controls.case.controls.problem.valid
+          ">
+          CONTINUE TO SIGNATURE
+        </button>
+      </div>
+    </form>
+  </mat-step>
+</mat-horizontal-stepper>

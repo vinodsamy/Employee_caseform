@@ -1,0 +1,79 @@
+<div class="mat-stepper-horizontal page-padding">
+  <h1>Legal Service Agreement</h1>
+  <br><br>
+  <h2>I agree</h2>
+  <br>
+  <ul>
+
+    <li>13.1 That I have complied with the Union’s Conditions of Legal Assistance and will continue to do so.</li>
+
+    <br><br>
+    <li>13.2 That I have not triggered the ACAS Early Conciliation procedure, and I understand that it is a condition of
+      my representation that I do not trigger the ACAS Early Conciliation procedure*.</li>
+
+    <br><br>
+    <li>13.3 I authorise UNISON to make representations on my behalf to ACAS under the Early Conciliation scheme. When
+      UNISON triggers the ACAS Early Conciliation procedure, and ACAS call me, I will inform them that they should speak
+      to the person from UNISON named in the letter to me from UNISON, normally my organiser*.</li>
+
+  </ul>
+  <br>
+
+  <br><br>
+
+  <form [formGroup]="form" (submit)="submit()" (window:resize)="beResponsive()">
+
+
+    <div class="sig-container" #sigContainer1>
+      <div fxLayout="row">
+        <signature-field formControlName="signatureField1"></signature-field>
+      </div>
+      <div fxLayout="row">
+        <button type="button" mat-button class="mat-warn" (click)="sigs.first.clear()"
+          [disabled]="!form.controls.signatureField1.valid">Repeat the signature</button>
+      </div>
+    </div>
+    <br><br>
+    <br><br>
+
+
+
+
+
+    <h2><b>14 Declarations</b></h2>
+    <br><br>
+    I confirm and agree to the conditions of assistance set out in this Case Form. I confirm I have retained a copy for
+    my own future reference. I understand and agree specifically to the conditions of assistance in respect of the Legal
+    Services Agreement at 13 above**. I confirm and agree that the information is a true and accurate record. I agree to
+    this information being shared with a third party in respect of any actions in accordance with the Data Protection
+    Act 1998. I understand that no information will be disclosed to any external marketing. I confirm my membership
+    subscriptions are up to date.
+    <br><br>
+    ** 13.2 and 13.3 do not apply to members in Northern Ireland.
+    <br><br>
+
+
+
+    <div class="sig-container" #sigContainer2>
+      <div fxLayout="row">
+        <signature-field formControlName="signatureField2"></signature-field>
+      </div>
+      <div fxLayout="row">
+        <button type="button" mat-button class="mat-warn" (click)="secondSig.clear()"
+          [disabled]="!form.controls.signatureField2.valid">Repeat this signature</button>
+      </div>
+    </div>
+    <br><br>
+    <br><br>
+
+    <br>
+    <div fxLayout="row">
+      <button type="button" mat-button class="mat-warn" (click)="clear()"
+        [disabled]="!form.controls.signatureField1.valid && !form.controls.signatureField2.valid">Clear both
+        signatures</button>
+      <button type="submit" mat-button class="mat-primary" (click)="submit()" [disabled]="!form.valid"
+        routerLink="/reviewpage">REVIEW BEFORE SUBMITTING</button>
+    </div>
+  </form>
+
+</div>

@@ -1,0 +1,38 @@
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.example-full-width {
+  width: 100%;
+  resize: vertical;
+}
+
+.spaceright {
+  padding-right: 4%;
+}
+
+.not-on-mobile {
+  display: none;
+}
+
+.customInput {
+  padding: 3px;
+}
+
+.page-padding {
+  padding: 1%;
+}
+
+.must-field {
+
+  border-radius: 8px;
+  border: 3px solid #3f51b5;
+  color: #3f51b5;
+  padding: 20px;
+}

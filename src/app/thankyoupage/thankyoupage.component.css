@@ -1,0 +1,15 @@
+.page-padding {
+  padding: 3%;
+}
+
+.caseform-border {
+  border: 1px solid black;
+  padding: 45px;
+}
+
+.emailaddress {
+  color: slategray;
+  padding: 30px;
+  text-decoration: underline;
+  text-decoration-color: darkgrey;
+}
